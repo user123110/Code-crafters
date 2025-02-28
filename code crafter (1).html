@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Attendence System</title>
+</head>
+<body>
+    <!DOCTYPE html>`        
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>QR Attendance System</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    </head>
+    <body>
+        <h1>QR Attendance System</h1>
+        
+        <h2>Generate QR Code</h2>
+        <div class ="container">
+            <p>Enter your text or URL</p>
+        </div>
+        <input type="text" id="name" placeholder="Text or URL">
+        <button onclick=" Generate QR Code()">Generate QR</button>
+        <div id="imgBox">
+            <img src="" id="qrImage">
+        </div> 
+
+         <h2>Scan QR Code</h2>
+        <input type="file" id="qrInput" accept="image/*" onchange="scanQR()">
+        <script>
+            function generateQR() {
+                let imgBox = document.getElementById("imgBox");
+                let qrImage = document.getElementById("qrImage");
+                let qrText = document.getElementById("qrText");
+
+                qrImage.Src = https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example%20
+                var name = document.getElementById("imgBox").value;
+                if (name === "") {
+                    alert("Please enter your name");
+                    return;
+                }
+                
+                fetch('http://localhost:5000/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("qrcode").innerHTML = "";
+                    new QRCode(document.getElementById("qrcode"), data.qrCode);
+                });
+            }
+        </script>
+    </body>
+    </html>
