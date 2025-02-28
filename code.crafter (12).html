@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Attendence System</title>
+</head>
+<body>
+    const express = require('express');
+    const mongoose = require('mongoose');
+    const QRCode = require('qrcode');
+    const bodyParser = require('body-parser');
+    const cors = require('cors');
+    
+    const app = express();
+    app.use(cors());
+    app.use(bodyParser.json());
+    
+    // MongoDB Connection
+    mongoose.connect('mongodb://localhost:27017/attendanceDB', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    
+    const attendanceSchema = new mongoose.Schema({
+      name: String,
+      date: { type: Date, default: Date.now },
+    });
+    const Attendance = mongoose.model('Attendance', attendanceSchema);
+    
+    // Generate QR Code
+    app.post('/generate', async (req, res) => {
+      const { name } = req.body;
+      const qrData = JSON.stringify({ name, time: new Date() });
+      const qrCode = await QRCode.toDataURL(qrData);
+      res.json({ qrCode });
+    });
+    
+    // Log Attendance
+    app.post('/scan', async (req, res) => {
+      const { name } = req.body;
+      const newEntry = new Attendance({ name });
+      await newEntry.save();
+      res.json({ message: 'Attendance recorded!' });
+    });
+    
+    app.listen(5000, () => console.log('Server running on port 5000'));
+    </body>
+    </html>
